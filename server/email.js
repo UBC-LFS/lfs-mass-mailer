@@ -132,8 +132,8 @@ const sendEmail = (mailOptions) => {
       port: process.env.EMAIL_PORT || 587,
       secure: process.env.EMAIL_SECURE || false,
       auth: {
-        user: process.env.ACCOUNT_USER || 'qlwbp7bnvnput4om@ethereal.email',
-        pass: process.env.ACCOUNT_PASS || 'Cjy8c5CtKgDkha8ZHB'
+        user: process.env.ACCOUNT_USER || 'q237myn5dkklzwpc@ethereal.email',
+        pass: process.env.ACCOUNT_PASS || 'cZ67cn7gXezUVPyNwZ'
       },
       tls: {
         rejectUnauthorized: false
