@@ -45,7 +45,7 @@
     "react-dom": "^16.2.0",
     "react-quill": "^1.2.3",
     "react-responsive-table": "^2.0.15",
-    "react-scripts": "1.0.17",
+    "react-scripts": "^1.1.5",
     "rimraf": "^2.6.2"
   },
   "devDependencies": {

@@ -6,6 +6,7 @@ import Paper from 'material-ui/Paper'
 import RaisedButton from 'material-ui/RaisedButton'
 import FlatButton from 'material-ui/FlatButton'
 import TextField from 'material-ui/TextField'
+import Toggle from 'material-ui/Toggle'
 
 const modules = {
   toolbar: [
@@ -25,12 +26,16 @@ export default class Template extends Component {
     super(props)
     this.state = {
       text: `<p>Hello %${props.headers[0]}%</p>`,
+      rawHTML: ``,
       subject: '',
-      error: 'This field is required'
+      error: 'This field is required',
+      useRawHTML: false
     }
     this.identiferButtons = this.identiferButtons.bind(this)
     this.dropText = this.dropText.bind(this)
     this.handleSubject = this.handleSubject.bind(this)
+    this.handleRawHTML = this.handleRawHTML.bind(this)
+    this.handleRawHTMLToggle = this.handleRawHTMLToggle.bind(this)
     this.handleText = this.handleText.bind(this)
     this.getSampleData = this.getSampleData.bind(this)
     this.replaceAll = this.replaceAll.bind(this)
@@ -48,12 +53,21 @@ export default class Template extends Component {
     event.target.value === '' ? this.setState({ subject: event.target.value, error: 'This field is required' }) : this.setState({ subject: event.target.value, error: '' })
   }
 
+  handleRawHTML (event) {
+    this.setState({ rawHTML: event.target.value })
+  }
+
   handleText (value) {
     this.setState({ text: value })
   }
 
+  handleRawHTMLToggle (event, isInputChecked) {
+    console.log(isInputChecked)
+    this.setState({ useRawHTML: isInputChecked })
+  }
+
   getSampleData () {
-    let preview = this.state.text
+    let preview = this.state.useRawHTML ? this.state.rawHTML : this.state.text
     this.props.headers.forEach(head => {
       preview = this.replaceAll({str: preview, find: `%${head}%`, replace: this.props.data[0][head]})
     })
@@ -85,13 +99,27 @@ export default class Template extends Component {
           onChange={this.handleSubject}
             />
         <br /><br />
+          <Toggle
+            onToggle={this.handleRawHTMLToggle}
+            label='Use Raw HTML'
+            style={{ width: 150 }}
+              />
         <div>
+          <TextField
+            hintText='Raw HTML'
+            fullWidth
+            value={this.state.rawHTML}
+            style={{ display: this.state.useRawHTML ? "" : "none" }}
+            onChange={this.handleRawHTML}
+            multiLine={true}
+              />
+          <br /><br />
           <ReactQuill
             value={this.state.text}
             onChange={this.handleText}
             modules={modules}
             formats={formats}
-            style={{ height: 300 }}
+            style={{ height: 300, display: this.state.useRawHTML ? "none" : "" }}
               />
           <br /><br />
         </div>
@@ -106,7 +134,7 @@ export default class Template extends Component {
         <br /> <br />
         <div className='control-buttons'>
           <FlatButton label='Back' onClick={this.props.backToContactPrev} />
-          <RaisedButton label='Send' primary onClick={() => this.props.confirmSend({ subject: this.state.subject, body: this.state.text })} />
+          <RaisedButton label='Send' primary onClick={() => this.props.confirmSend({ subject: this.state.subject, body: this.state.useRawHTML ? this.state.rawHTML : this.state.text })} />
         </div>
         <br /> <br />
       </div>
