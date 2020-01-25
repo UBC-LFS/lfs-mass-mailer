@@ -1,10 +1,12 @@
 language: node_js
+
 node_js:
-  - "node"
-cache:
-  directories:
-    - node_modules
+  - 8
+
 script:
-  - npm run build-react
   - npm run build
-  - npm test
+
+branches:
+  only:
+  - gh-pages
+  - /.*/
