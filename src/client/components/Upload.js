@@ -4,13 +4,19 @@ import { Button, Box } from '@material-ui/core';
 
 const Upload = ({ handleUpload, handleFileSelect }) => (
   <div>
-    <h3>Upload Contacts via .CSV</h3>
+    <h3>
+      <Box color="success.dark">Upload Contacts via .CSV</Box>
+    </h3>
 
     <div>
       Please upload a properly formatted .csv file.
       <ul>
         <li>Files must be under 10MB.</li>
         <li>All other file types are rejected.</li>
+        <li>A file must contain "Email" and "First Name" columns.</li>
+        <li>
+          An example .CSV file can be found <a href='/example.csv' target='_blank'>here</a>
+        </li>
       </ul>
     </div>
 

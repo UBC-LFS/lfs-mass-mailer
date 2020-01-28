@@ -1,11 +1,24 @@
 import React from 'react';
+import {
+  Container,
+  Box
+} from '@material-ui/core';
+
 
 const Footer = () => (
-  <div className='footer'>
-    <p>An example .CSV file can be found <a href='/example.csv' target='_blank'>here</a></p>
-    <p>For assistance contact: <a href='mailto:it@landfood.ubc.ca' target='_top'>it@landfood.ubc.ca</a></p>
-    <a href='https://secure.landfood.ubc.ca/Shibboleth.sso/Logout?return=http://dietetics.landfood.ubc.ca' >CWL LOGOUT</a>
-  </div>
+  <footer>
+    <Container maxWidth="md">
+      <Box justifyContent="center">
+        <div>The University of British Columbia</div>
+        <div>Faculty of Land and Food Systems</div>
+
+        <div>
+          For assistance contact:
+          <a href='mailto:it@landfood.ubc.ca' target='_top'>it@landfood.ubc.ca</a>
+        </div>
+      </Box>
+    </Container>
+  </footer>
 );
 
 export default Footer;

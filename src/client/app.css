@@ -8,6 +8,29 @@ body {
   font-family: sans-serif;
 }
 
+footer {
+  height: 100px;
+  margin-top: 150px;
+  background-color: #424242;
+  color: #fff;
+}
+
+footer a {
+  color: #fff;
+}
+
+.grid-p2 {
+  padding: 20px;
+}
+
+.material-icons {
+  vertical-align: middle !important;
+}
+
 .text-center {
   text-align: center;
+}
+
+.text-bold {
+  font-weight: 500;
 }

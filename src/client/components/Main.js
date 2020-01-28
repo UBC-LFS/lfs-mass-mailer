@@ -1,14 +1,20 @@
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import Papa from 'papaparse';
+
 import {
   Grid,
   Button,
   Box,
-  Paper
+  Paper,
+  Card,
+  CardContent
 } from '@material-ui/core';
+import InfoIcon from '@material-ui/icons/Info';
 
 import Upload from './Upload';
 import DisplayTable from './DisplayTable';
+import Write from './Write';
 
 import {
   MAX_FILE_SIZE,
@@ -16,7 +22,6 @@ import {
   EMAIL_HEADER,
   validateEmail
 } from '../scripts/util.js';
-
 
 
 
@@ -53,7 +58,13 @@ class Main extends Component {
     if ( !headers.includes(EMAIL_HEADER) ) {
       this.setState({
         files: null,
-        errors: { failure: "File does not contains an Email column. Please check headers and columns" }
+        errors: { failure: "File does not contain an Email column. Please check headers and columns" }
+      });
+      return;
+    } else if ( !headers.includes(FIRST_NAME_HEADER) ) {
+      this.setState({
+        files: null,
+        errors: { failure: "File does not contain a First Name column. Please check headers and columns" }
       });
       return;
     }
@@ -96,7 +107,6 @@ class Main extends Component {
 
           this.setState({
             data,
-            files: null,
             fileSummary
           });
         } else {
@@ -109,68 +119,73 @@ class Main extends Component {
     });
   }
 
+  send = emailData => {
+    console.log("send", emailData);
+  }
+
   render() {
     const { data, files, errors, fileSummary } = this.state;
-
-    // console.log("data",data);
-    // console.log("emailHeader", emailHeader);
-
+    console.log(data);
+    console.log(files);
+    console.log(errors);
+    console.log(fileSummary);
 
     return (
       <div>
         <Grid container>
-          <Grid item md={4}>
+          <Grid item md={4} className="grid-p2">
 
             <Upload
               handleUpload={ this.handleUpload }
               handleFileSelect={ this.handleFileSelect }
             />
 
-            { files &&
-              <Box color="success.main" mt={1}>File selected successfully.</Box> }
+            { files && <Box color="success.main" mt={1}>File selected successfully.</Box> }
             { errors.failure && <Box color="error.main" mt={1}>{ errors.failure }</Box> }
 
-            {data &&
-              <div>
-                <h5>Uploaded File Summary</h5>
-                <table>
-                  <tr>
-                    <td>Total rows:</td>
-                    <td>{ data.length }</td>
-                  </tr>
-                  <tr>
-                    <td>Number of Valid Emails:</td>
-                    <td>{ data.length - fileSummary.invalidEmails.length }</td>
-                  </tr>
-                  <tr>
-                    <td>List of missing first name rows:</td>
-                    <td>{ fileSummary.missingFirstNames.length > 0
-                          ? fileSummary.missingFirstNames
-                          : "None"}
-                    </td>
-                  </tr>
-                  <tr>
-                    <td>List of invalid Email rows:</td>
-                    <td>{fileSummary.invalidEmails.length > 0
-                          ? fileSummary.invalidEmails
-                          : "None"}
-                    </td>
-                  </tr>
-                </table>
-              </div>}
+            { data &&
+              <Card variant="outlined" style={{ marginTop: '50px', backgroundColor: '#bbdefb' }}>
+                <CardContent style={{ padding: '0 20px' }}>
+                  <h4>
+                    <Box color="info.dark">Summary of Uploaded File</Box>
+                  </h4>
+                  <table>
+                    <tr>
+                      <td>Total rows:</td>
+                      <td>{ data.length }</td>
+                    </tr>
+                    <tr>
+                      <td>Valid Emails:</td>
+                      <td>{ data.length - fileSummary.invalidEmails.length }</td>
+                    </tr>
+                    <tr>
+                      <td>Invalid Emails:</td>
+                      <td>{fileSummary.invalidEmails.length > 0 ? fileSummary.invalidEmails : "None" }
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>Missing First Names:</td>
+                      <td>{ fileSummary.missingFirstNames.length > 0 ? fileSummary.missingFirstNames : "None" }
+                      </td>
+                    </tr>
+                  </table>
 
+                  <Box my={3} p={2} style={{ backgroundColor: '#fff' }}>
+                    <InfoIcon className="material-icons" /> Please scroll down to write an Email.
+                  </Box>
+                </CardContent>
+              </Card> }
           </Grid>
-          <Grid item md={8}>
-            {data != null &&
-              <DisplayTable
-                data={ data } />}
-
-
+          <Grid item md={8} className="grid-p2">
+            { data != null && <DisplayTable data={ data } /> }
           </Grid>
         </Grid>
+
+        { data && <Write send={ this.send }/> }
       </div>
     );
   }
 }
+
 
 export default Main;

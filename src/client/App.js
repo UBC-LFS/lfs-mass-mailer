@@ -7,6 +7,7 @@ import {
 } from '@material-ui/core';
 
 import Main from './components/Main';
+import Footer from './components/Footer';
 import './app.css';
 
 const App = () => (
@@ -24,7 +25,7 @@ const App = () => (
       <Main />
     </Container>
 
-    <footer></footer>
+    <Footer />
   </div>
 );
 
