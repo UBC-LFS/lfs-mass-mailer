@@ -14,10 +14,10 @@ class Write extends Component {
   state = {
     email: {
       subject: '',
-      rawMessage: '',
-      htmlMessage: `<p>Hello %${this.props.headers[0]}%</p>`
+      rawMessage: `Hi ${this.props.data[0]['First Name']},`,
+      htmlMessage: `<p>Hi ${this.props.data[0]['First Name']},</p>`
     },
-    textType: false,
+    rawTextType: false,
     errors: {
       subject: null,
       rawMessage: null,
@@ -26,8 +26,8 @@ class Write extends Component {
   }
 
 
-  handleTextType = event => {
-    this.setState({ textType: event.target.checked });
+  handleRawTextType = event => {
+    this.setState({ rawTextType: event.target.checked });
   }
 
   handleEmail = e => {
@@ -42,11 +42,9 @@ class Write extends Component {
       value = e.target.value;
     }
 
-    if (name === 'rawMessage' && this.state.textType) {
+    if (name === 'rawMessage' && this.state.rawTextType) {
       value = value.replace('\\n', '\n');
     }
-    console.log(name);
-    console.log(value);
 
     this.setState({
       email: { ...this.state.email, [name]: value },
@@ -55,12 +53,12 @@ class Write extends Component {
   }
 
   validation = () => {
-    const { textType, email } = this.state;
+    const { rawTextType, email } = this.state;
     let errors = {};
 
     errors.subject = (email.subject.length === 0) ? 'This field is required' : null;
-    errors.rawMessage = (textType && email.rawMessage.length === 0) ? 'This field is required' : null;
-    errors.htmlMessage = (!textType && email.htmlMessage.length === 0) ? 'This field is required' : null;
+    errors.rawMessage = (rawTextType && email.rawMessage.length === 0) ? 'This field is required' : null;
+    errors.htmlMessage = (!rawTextType && email.htmlMessage.length === 0) ? 'This field is required' : null;
 
     this.setState({ errors });
     return errors.subject !== null || errors.rawMessage !== null || errors.htmlMessage !== null;
@@ -71,18 +69,21 @@ class Write extends Component {
     const error = this.validation();
     if (error) return;
 
-    const { textType, email } = this.state;
-    console.log("good", this.state.email);
-    this.props.send({ textType, email });
+    this.props.send({
+      rawTextType: this.state.rawTextType,
+      email: this.state.email
+    });
   }
 
   render() {
-    const { email, textType, errors } = this.state;
-    console.log(errors);
+    const { status } = this.props;
+    const { email, rawTextType, errors } = this.state;
+
+    console.log("status", status);
 
     const preview= () => {
       let message = '';
-      if (textType) {
+      if (rawTextType) {
         message = email.rawMessage.replace(/(?:\r\n|\r|\n)/g, '<br />');
       } else {
         message = email.htmlMessage.replace(new RegExp('<p><br></p>', 'g'), '<br />');
@@ -116,13 +117,13 @@ class Write extends Component {
                 <span className="text-bold">Use Raw HTML:</span>
 
                 <Switch
-                  checked={ textType }
-                  onChange={ this.handleTextType }
+                  checked={ rawTextType }
+                  onChange={ this.handleRawTextType }
                   color="primary" />
               </Box>
 
               <div className="text-bold">Message:</div>
-              { textType
+              { rawTextType
                 ? <TextField
                     value={ email.rawMessage }
                     onChange={ this.handleEmail }
@@ -144,7 +145,9 @@ class Write extends Component {
             </div>
 
             <Box mt={2}>
-              <Button variant="contained" color="primary" type="submit">Confirm to send</Button>
+              <Button variant="contained" color="primary" type="submit">
+                { status.isSending ? 'Sending...' : 'Send' }
+              </Button>
             </Box>
           </form>
 

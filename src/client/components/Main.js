@@ -30,7 +30,11 @@ class Main extends Component {
     data: null,
     files: null,
     errors: {},
-    fileSummary: {}
+    fileSummary: {},
+    status: {
+      isSending: false,
+      isDone: false
+    }
   };
 
   handleFileSelect = event => {
@@ -120,15 +124,46 @@ class Main extends Component {
   }
 
   send = emailData => {
+    const { data } = this.state;
+
     console.log("send", emailData);
+    console.log("data", data[0]);
+
+    this.setState({ status: { isSending: false, isDone: true }});
+
+    const html = (emailData.rawTextType == true) ? emailData.rawMessage : emailData.htmlMessage;
+    const headers = Object.keys(data[0]);
+    const subject = emailData.subject;
+    const body = {
+      data: data,
+      emailID: 'Email',
+      headers: headers,
+      subject: subject,
+      html: html
+    };
+
+    console.log("body", body);
+
+    fetch('/api/send-email', {
+      method: "POST",
+      headers: {
+        "Accpet": "application/json",
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(body)
+    })
+    .then(res => {
+      console.log("res", res);
+      return res;
+    })
+    .then(result => {
+      console.log("result", result);
+      this.setState({ status: { isSending: false, isDone: true }});
+    });
   }
 
   render() {
-    const { data, files, errors, fileSummary } = this.state;
-    console.log(data);
-    console.log(files);
-    console.log(errors);
-    console.log(fileSummary);
+    const { data, files, errors, fileSummary, status } = this.state;
 
     return (
       <div>
@@ -181,7 +216,7 @@ class Main extends Component {
           </Grid>
         </Grid>
 
-        { data && <Write send={ this.send }/> }
+        { data && <Write data={ data } send={ this.send } status={ status } /> }
       </div>
     );
   }
