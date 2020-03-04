@@ -13,7 +13,7 @@ const Upload = ({ handleUpload, handleFileSelect }) => (
       <ul>
         <li>Files must be under 10MB.</li>
         <li>All other file types are rejected.</li>
-        <li>A file must contain "Email" and "First Name" columns.</li>
+        <li>A file must contain "Email", "First Name" and "Last Name" columns.</li>
         <li>
           An example .CSV file can be found <a href='/example.csv' target='_blank'>here</a>
         </li>

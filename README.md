@@ -9,79 +9,48 @@
 [![Cypress.io tests](https://img.shields.io/badge/cypress.io-tests-green.svg?style=flat-square)](https://cypress.io)
 [![JavaScript Style Guide](https://img.shields.io/badge/code_style-standard-brightgreen.svg)](https://standardjs.com)
 
-## Quick Overview 
+## Quick Overview
 
 ```sh
 git clone
 npm install
 ```
 
-### Local Dev
+##### Boilerplate: https://github.com/crsandeep/simple-react-full-stack
 
-```sh
-Frontend:
-npm run start-react
-
-Fullstack:
-npm run build-react 
-npm start
-
-Electron: (Electron Branch)
-npm run build-react 
-npm run build 
-npm run start-electron
-```
-
-### Production
-
-```sh
-Fullstack (Minified):
-npm run build-react
-npm run build
-
-Electron: (Electron Branch)
-npm run build-react 
-npm run build 
-npm run package-mac
-```
-
-### Testing
-
-```
-Jest:
-npm run test
-
-Cypress:
-npm run build-react 
-npm start
-
-In a new terminal run: 
-npm run cypress-open
-```
-
+## Nodemailer - [SMTP Transporter](https://nodemailer.com/smtp/)
 
 ## Setup SMTP server
-
-### Create .env
-
-Create `.env` file and specify the following:
+##### [UBC Mail Server Settings](https://it.ubc.ca/services/email-voice-internet/ubc-faculty-staff-email-fasmail/fasmail-setup-documents#serversettings)
 
 ```
+### Environment variables
+Create `.env` file and specify the following:
+```
+EMAIL_HOST=
 ACCOUNT_USER=
 ACCOUNT_PASS=
 ACCOUNT_EMAIL=
 ACCOUNT_NAME=
-EMAIL_HOST=
-EMAIL_PORT=
-EMAIL_SECURE=
+
+JWT_SECRET_KEY=
 ```
 
-Property	|	Type	|	Description
-:-----------------------|:--------------|:--------------------------------
-ACCOUNT_USER	|	string	|	account login username 
-ACCOUNT_PASS | string  | account login password 
-ACCOUNT_EMAIL	|	string	|	account email
-ACCOUNT_NAME | string | user's full name
-EMAIL_HOST	|	string	|	host server 
-EMAIL_PORT | number | port number
-EMAIL_SECURE	|	bool |	specify false. if `EMAIL_PORT` = `465`, specify true
+Quick Start
+# Clone the repository
+git clone https://github.com/crsandeep/simple-react-full-stack
+
+# Go inside the directory
+cd simple-react-full-stack
+
+# Install dependencies
+yarn (or npm install)
+
+# Start development server
+yarn dev (or npm run dev)
+
+# Build for production
+yarn build (or npm run build)
+
+# Start production server
+yarn start (or npm start)

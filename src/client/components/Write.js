@@ -79,8 +79,6 @@ class Write extends Component {
     const { status } = this.props;
     const { email, rawTextType, errors } = this.state;
 
-    console.log("status", status);
-
     const preview= () => {
       let message = '';
       if (rawTextType) {
@@ -145,9 +143,9 @@ class Write extends Component {
             </div>
 
             <Box mt={2}>
-              <Button variant="contained" color="primary" type="submit">
-                { status.isSending ? 'Sending...' : 'Send' }
-              </Button>
+              { status.isSending
+                ? <Button variant="contained" color="primary" type="submit" disabled>Sending...</Button>
+                : <Button variant="contained" color="primary" type="submit">Send</Button> }
             </Box>
           </form>
 

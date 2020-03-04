@@ -18,11 +18,11 @@ import Write from './Write';
 
 import {
   MAX_FILE_SIZE,
-  FIRST_NAME_HEADER,
   EMAIL_HEADER,
+  FIRST_NAME_HEADER,
+  LAST_NAME_HEADER,
   validateEmail
 } from '../scripts/util.js';
-
 
 
 class Main extends Component {
@@ -71,13 +71,23 @@ class Main extends Component {
         errors: { failure: "File does not contain a First Name column. Please check headers and columns" }
       });
       return;
+    } else if ( !headers.includes(LAST_NAME_HEADER) ) {
+      this.setState({
+        files: null,
+        errors: { failure: "File does not contain a Last Name column. Please check headers and columns" }
+      });
+      return;
     }
 
     let missingFirstNames = [];
+    let missingLastNames = [];
     let invalidEmails = [];
     for (let i = 0; i < rows.length; i++) {
       if (rows[i][FIRST_NAME_HEADER].length === 0) {
         missingFirstNames.push(i + 1);
+      }
+      if (rows[i][LAST_NAME_HEADER].length === 0) {
+        missinglastNames.push(i + 1);
       }
       if (!validateEmail(rows[i][EMAIL_HEADER])) {
         invalidEmails.push(i + 1);
@@ -86,6 +96,7 @@ class Main extends Component {
 
     return {
       missingFirstNames,
+      missingLastNames,
       invalidEmails
     };
   }
@@ -126,14 +137,11 @@ class Main extends Component {
   send = emailData => {
     const { data } = this.state;
 
-    console.log("send", emailData);
-    console.log("data", data[0]);
+    this.setState({ status: { isSending: true, isDone: false }});
 
-    this.setState({ status: { isSending: false, isDone: true }});
-
-    const html = (emailData.rawTextType == true) ? emailData.rawMessage : emailData.htmlMessage;
+    const html = (emailData.rawTextType == true) ? emailData.email.rawMessage : emailData.email.htmlMessage;
     const headers = Object.keys(data[0]);
-    const subject = emailData.subject;
+    const subject = emailData.email.subject;
     const body = {
       data: data,
       emailID: 'Email',
@@ -141,8 +149,6 @@ class Main extends Component {
       subject: subject,
       html: html
     };
-
-    console.log("body", body);
 
     fetch('/api/send-email', {
       method: "POST",
@@ -152,10 +158,7 @@ class Main extends Component {
       },
       body: JSON.stringify(body)
     })
-    .then(res => {
-      console.log("res", res);
-      return res;
-    })
+    .then(res => res)
     .then(result => {
       console.log("result", result);
       this.setState({ status: { isSending: false, isDone: true }});
@@ -190,6 +193,16 @@ class Main extends Component {
                       <td>{ data.length }</td>
                     </tr>
                     <tr>
+                      <td>Missing First Names:</td>
+                      <td>{ fileSummary.missingFirstNames.length > 0 ? fileSummary.missingFirstNames : "None" }
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>Missing Last Names:</td>
+                      <td>{ fileSummary.missingLastNames.length > 0 ? fileSummary.missingLastNames : "None" }
+                      </td>
+                    </tr>
+                    <tr>
                       <td>Valid Emails:</td>
                       <td>{ data.length - fileSummary.invalidEmails.length }</td>
                     </tr>
@@ -198,11 +211,7 @@ class Main extends Component {
                       <td>{fileSummary.invalidEmails.length > 0 ? fileSummary.invalidEmails : "None" }
                       </td>
                     </tr>
-                    <tr>
-                      <td>Missing First Names:</td>
-                      <td>{ fileSummary.missingFirstNames.length > 0 ? fileSummary.missingFirstNames : "None" }
-                      </td>
-                    </tr>
+
                   </table>
 
                   <Box my={3} p={2} style={{ backgroundColor: '#fff' }}>
