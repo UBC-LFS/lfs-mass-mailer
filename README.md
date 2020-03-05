@@ -24,6 +24,7 @@
 
 ### Environment variables
 Create **.env** file and specify the following:
+
 ```
 EMAIL_HOST=
 ACCOUNT_USER=
@@ -34,7 +35,10 @@ ACCOUNT_NAME=
 JWT_SECRET_KEY=
 ```
 
-Quick Start
+
+### Quick Start
+
+```
 # Clone the repository
 git clone https://github.com/crsandeep/simple-react-full-stack
 
@@ -52,3 +56,4 @@ yarn build (or npm run build)
 
 # Start production server
 yarn start (or npm start)
+```
