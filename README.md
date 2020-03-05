@@ -18,11 +18,11 @@
 - Nodemailer: [SMTP Transporter](https://nodemailer.com/smtp/)
 
 
-## Setup SMTP server
-##### [UBC Mail Server Settings](https://it.ubc.ca/services/email-voice-internet/ubc-faculty-staff-email-fasmail/fasmail-setup-documents#serversettings)
+### Setup SMTP server
+- [UBC Mail Server Settings](https://it.ubc.ca/services/email-voice-internet/ubc-faculty-staff-email-fasmail/fasmail-setup-documents#serversettings)
 
 
-### Environment variables
+### Create environment variables
 Create **.env** file and specify the following:
 
 ```
