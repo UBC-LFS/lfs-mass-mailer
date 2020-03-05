@@ -10,7 +10,10 @@ import {
   Card,
   CardContent
 } from '@material-ui/core';
+
 import InfoIcon from '@material-ui/icons/Info';
+import ThumbUpIcon from '@material-ui/icons/ThumbUp';
+
 
 import Upload from './Upload';
 import DisplayTable from './DisplayTable';
@@ -33,7 +36,9 @@ class Main extends Component {
     fileSummary: {},
     status: {
       isSending: false,
-      isDone: false
+      isDone: false,
+      message: null,
+      receivers: []
     }
   };
 
@@ -137,17 +142,18 @@ class Main extends Component {
   send = emailData => {
     const { data } = this.state;
 
-    this.setState({ status: { isSending: true, isDone: false }});
+    this.setState({
+      status: { ...this.state.status, isSending: true, isDone: false }
+    });
 
     const html = (emailData.rawTextType == true) ? emailData.email.rawMessage : emailData.email.htmlMessage;
     const headers = Object.keys(data[0]);
     const subject = emailData.email.subject;
     const body = {
       data: data,
-      emailID: 'Email',
-      headers: headers,
       subject: subject,
-      html: html
+      html: (emailData.rawTextType == true) ? null : emailData.email.htmlMessage,
+      text: (emailData.rawTextType == true) ? emailData.email.rawMessage : null
     };
 
     fetch('/api/send-email', {
@@ -158,74 +164,131 @@ class Main extends Component {
       },
       body: JSON.stringify(body)
     })
-    .then(res => res)
+    .then(res => res.json())
     .then(result => {
-      console.log("result", result);
-      this.setState({ status: { isSending: false, isDone: true }});
+      console.log(result);
+      if (result.message === 'Success') {
+        this.setState({
+          data: null,
+          files: null,
+          errors: {},
+          fileSummary: {},
+          status: {
+            isSending: false,
+            isDone: true,
+            message: result.message,
+            receivers: result.receivers
+          }
+        });
+      } else {
+        this.setState({
+          status: {
+            ...this.state.status,
+            isSending: false,
+            isDone: true,
+            message: result.message,
+            receivers: result.receivers
+          }
+        });
+      }
+
     });
   }
 
   render() {
     const { data, files, errors, fileSummary, status } = this.state;
 
+    let statusBox = null;
+    if (status.isSending === false && status.isDone === true) {
+      const receivers = status.receivers.map((user, i) => <li key={i}>{ user }</li>);
+
+      if (status.message === 'Success') {
+          statusBox = (<div className="bg-light-gray my-3 p-3">
+                        <h4 className="text-success font-weight-600 mb-3">
+                          <ThumbUpIcon className="material-icons" /> Sent { status.receivers.length } email(s) successfully.
+                        </h4>
+                        <p>
+                          Please check receivers below.
+                          <ol>{ receivers }</ol>
+                        </p>
+
+                      </div>);
+      } else {
+        statusBox = (<div className="bg-light-gray my-3 p-3">
+                      <h4 className="text-error font-weight-600 mb-3">
+                        <ThumbUpIcon className="material-icons" /> Failed to send emails.
+                      </h4>
+                      { status.receivers.length > 0
+                        ? <p>
+                            Sent { status.receivers.length } email(s) partially. Please check receivers below.
+                            <ol>{ receivers }</ol>
+                          </p>
+                        : <p>Sorry, we cannot send any emails.</p>
+                      }
+                    </div>);
+      }
+    }
+
     return (
       <div>
+        <h2 className="text-info text-center">Please be Patient and Do Not Refresh the Browser!</h2>
+
         <Grid container>
-          <Grid item md={4} className="grid-p2">
+          <Grid item md={5} className="grid-p2">
 
             <Upload
               handleUpload={ this.handleUpload }
               handleFileSelect={ this.handleFileSelect }
             />
 
-            { files && <Box color="success.main" mt={1}>File selected successfully.</Box> }
-            { errors.failure && <Box color="error.main" mt={1}>{ errors.failure }</Box> }
+            { files && <p className="text-success my-2">File selected successfully.</p> }
+
+            { errors.failure && <p className="text-error my-2">{ errors.failure }</p> }
 
             { data &&
-              <Card variant="outlined" style={{ marginTop: '50px', backgroundColor: '#bbdefb' }}>
-                <CardContent style={{ padding: '0 20px' }}>
-                  <h4>
-                    <Box color="info.dark">Summary of Uploaded File</Box>
-                  </h4>
-                  <table>
-                    <tr>
-                      <td>Total rows:</td>
-                      <td>{ data.length }</td>
-                    </tr>
-                    <tr>
-                      <td>Missing First Names:</td>
-                      <td>{ fileSummary.missingFirstNames.length > 0 ? fileSummary.missingFirstNames : "None" }
-                      </td>
-                    </tr>
-                    <tr>
-                      <td>Missing Last Names:</td>
-                      <td>{ fileSummary.missingLastNames.length > 0 ? fileSummary.missingLastNames : "None" }
-                      </td>
-                    </tr>
-                    <tr>
-                      <td>Valid Emails:</td>
-                      <td>{ data.length - fileSummary.invalidEmails.length }</td>
-                    </tr>
-                    <tr>
-                      <td>Invalid Emails:</td>
-                      <td>{fileSummary.invalidEmails.length > 0 ? fileSummary.invalidEmails : "None" }
-                      </td>
-                    </tr>
+              <div className="bg-light-gray mt-4 p-3">
+                <h4 className="text-info">
+                  <InfoIcon className="material-icons" /> Summary of Uploaded File
+                </h4>
 
-                  </table>
+                <table className="custom-table my-3">
+                  <tr>
+                    <td>Total rows:</td>
+                    <td>{ data.length }</td>
+                  </tr>
+                  <tr>
+                    <td>Missing First Names:</td>
+                    <td>{ fileSummary.missingFirstNames.length > 0 ? fileSummary.missingFirstNames : "None" }
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>Missing Last Names:</td>
+                    <td>{ fileSummary.missingLastNames.length > 0 ? fileSummary.missingLastNames : "None" }
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>Valid Emails:</td>
+                    <td>{ data.length - fileSummary.invalidEmails.length }</td>
+                  </tr>
+                  <tr>
+                    <td>Invalid Emails:</td>
+                    <td>{fileSummary.invalidEmails.length > 0 ? fileSummary.invalidEmails : "None" }
+                    </td>
+                  </tr>
+                </table>
 
-                  <Box my={3} p={2} style={{ backgroundColor: '#fff' }}>
-                    <InfoIcon className="material-icons" /> Please scroll down to write an Email.
-                  </Box>
-                </CardContent>
-              </Card> }
+                <p className="mt-5">Please scroll down to write an email.</p>
+              </div> }
           </Grid>
-          <Grid item md={8} className="grid-p2">
+          <Grid item md={7} className="grid-p2">
             { data != null && <DisplayTable data={ data } /> }
           </Grid>
         </Grid>
 
         { data && <Write data={ data } send={ this.send } status={ status } /> }
+
+        { statusBox }
+
       </div>
     );
   }

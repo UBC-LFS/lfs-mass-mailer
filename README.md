@@ -9,23 +9,21 @@
 [![Cypress.io tests](https://img.shields.io/badge/cypress.io-tests-green.svg?style=flat-square)](https://cypress.io)
 [![JavaScript Style Guide](https://img.shields.io/badge/code_style-standard-brightgreen.svg)](https://standardjs.com)
 
-## Quick Overview
 
-```sh
-git clone
-npm install
-```
 
-##### Boilerplate: https://github.com/crsandeep/simple-react-full-stack
+### Boilerplate: https://github.com/crsandeep/simple-react-full-stack
 
-## Nodemailer - [SMTP Transporter](https://nodemailer.com/smtp/)
+
+### Core NPM Package
+- Nodemailer: [SMTP Transporter](https://nodemailer.com/smtp/)
+
 
 ## Setup SMTP server
 ##### [UBC Mail Server Settings](https://it.ubc.ca/services/email-voice-internet/ubc-faculty-staff-email-fasmail/fasmail-setup-documents#serversettings)
 
-```
+
 ### Environment variables
-Create `.env` file and specify the following:
+Create **.env** file and specify the following:
 ```
 EMAIL_HOST=
 ACCOUNT_USER=

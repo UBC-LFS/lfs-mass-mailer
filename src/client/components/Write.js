@@ -14,8 +14,9 @@ class Write extends Component {
   state = {
     email: {
       subject: '',
-      rawMessage: `Hi ${this.props.data[0]['First Name']},`,
-      htmlMessage: `<p>Hi ${this.props.data[0]['First Name']},</p>`
+      rawMessage: `Hi %FIRST_NAME%,`,
+      htmlMessage: `<p>Hi %FIRST_NAME%,</p>`
+      //htmlMessage: `<p>Hi ${this.props.data[0]['First Name']},</p>`
     },
     rawTextType: false,
     errors: {
@@ -95,9 +96,7 @@ class Write extends Component {
       <Grid container>
         <Grid item md={6} className="grid-p2">
 
-          <h3>
-            <Box color="success.dark">Write Your Email</Box>
-          </h3>
+          <h3 className="text-info font-weight-600">Write Your Email</h3>
 
           <form onSubmit={ this.confirm }>
 
@@ -112,32 +111,35 @@ class Write extends Component {
 
             <div>
               <Box my={2}>
-                <span className="text-bold">Use Raw HTML:</span>
-
+                <span className="font-weight-500">Use Raw HTML:</span>
                 <Switch
                   checked={ rawTextType }
                   onChange={ this.handleRawTextType }
                   color="primary" />
               </Box>
 
-              <div className="text-bold">Message:</div>
               { rawTextType
-                ? <TextField
-                    value={ email.rawMessage }
-                    onChange={ this.handleEmail }
-                    name="rawMessage"
-                    label="Message"
-                    multiline
-                    fullWidth={true}
-                    rows="10"
-                    variant="outlined"
-                    error={ errors.rawMessage !== null }
-                    helperText={ errors.rawMessage } />
-                : <ReactQuill
-                    value={ email.htmlMessage }
-                    onChange={ this.handleEmail }
-                    name="htmlMessage"
-                    style={{ height: "250px", marginBottom: "60px" }} /> }
+                ? <div>
+                    <TextField
+                      value={ email.rawMessage }
+                      onChange={ this.handleEmail }
+                      name="rawMessage"
+                      label="Message"
+                      multiline
+                      fullWidth={true}
+                      rows="10"
+                      variant="outlined"
+                      error={ errors.rawMessage !== null }
+                      helperText={ errors.rawMessage } />
+                  </div>
+                : <div>
+                    <div className="font-weight-500">Message:</div>
+                    <ReactQuill
+                      value={ email.htmlMessage }
+                      onChange={ this.handleEmail }
+                      name="htmlMessage"
+                      style={{ height: "250px", marginBottom: "60px" }} />
+                  </div> }
 
               { !!errors.htmlMessage && <Box color="error.main">{ errors.htmlMessage }</Box> }
             </div>
@@ -149,15 +151,15 @@ class Write extends Component {
             </Box>
           </form>
 
+          <p className="text-gray my-3">It will take some time. Please wait until it is finished.</p>
+
         </Grid>
         <Grid item md={6} className="grid-p2">
-          <h3>
-            <Box color="success.dark">Preview of Email</Box>
-          </h3>
+          <h3 className="text-info font-weight-600">Preview of Email</h3>
 
           <Paper elevation={3}>
             <Box py={2} px={3}>
-              <h4>{ email.subject }</h4>
+              <h3 className="mb-3">{ email.subject }</h3>
               <div dangerouslySetInnerHTML={{__html: preview() }} />
             </Box>
           </Paper>

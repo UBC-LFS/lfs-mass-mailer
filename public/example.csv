@@ -1,10 +1,10 @@
-First Name,Last Name,Email,School,Course
-Christian,Gage,example@gmail.com,KPU,CPSC110
-Deana,Eartha,example@gmail.com,UBC,MATH320
-Ricky,Frazier,example@gmail.com,KPU,ENG119
-Benton,Demelza,example@gmail.com,UBC,PSYC333
-Aden,Branda,example@gmail.com,SFU,CPSC304
-Dorian,Edie,example@gmail.com,UBC,CPSC310
-Meriel,Margie,example@gmail.com,SFU,CPSC311
-Angelina,Daren,example@gmail.com,UBC,CPSC210
-Yolanda,Emmerson,example@gmail.com,MIT,MATH320
+First Name,Last Name,Email
+Christian,Gage,example@gmail.com
+Deana,Eartha,example@gmail.com
+Ricky,Frazier,example@gmail.com
+Benton,Demelza,example@gmail.com
+Aden,Branda,example@gmail.com
+Dorian,Edie,example@gmail.com
+Meriel,Margie,example@gmail.com
+Angelina,Daren,example@gmail.com
+Yolanda,Emmerson,example@gmail.com

@@ -7,11 +7,10 @@ import {
 } from '@material-ui/core';
 
 import Main from './components/Main';
-import Footer from './components/Footer';
 import './app.css';
 
 const App = () => (
-  <div>
+  <div className="app">
     <AppBar position="static">
       <Container maxWidth="lg">
         <Box py={2}>
@@ -20,12 +19,24 @@ const App = () => (
       </Container>
     </AppBar>
 
-    <Container maxWidth="lg">
-      <h2 className="text-center">Please be Patient and Do Not Refresh the Browser!</h2>
-      <Main />
-    </Container>
+    <main>
+      <Container maxWidth="lg">
+        <Main />
+      </Container>
+    </main>
 
-    <Footer />
+    <footer>
+      <Container maxWidth="md">
+        <div className="footer-item">
+          <div>The University of British Columbia</div>
+          <div>Faculty of Land and Food Systems</div>
+        </div>
+        <div className="footer-item">
+          <div>For assistance contact:</div>
+          <div><a href='mailto:it@landfood.ubc.ca' target='_top'>it@landfood.ubc.ca</a></div>
+        </div>
+      </Container>
+    </footer>
   </div>
 );
 

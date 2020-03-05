@@ -12,23 +12,25 @@ const emailHeaderValue = 'Email';
 
 const DisplayTable = ({ data }) => {
   const headers = Object.keys(data[0]);
-  const displayRow = data => headers.map((item, j) => <TableCell key={j}>{data[item]}</TableCell>);
+  const displayRow = data => headers.map((item, j) =>
+    <TableCell key={j}>{data[item]}</TableCell>);
 
   return (
     <div>
-      <h3>
-        <Box color="success.dark">List of the First Ten rows</Box>
-      </h3>
+      <h3 className="font-weight-600">List of the First Ten rows</h3>
+
       <TableContainer component={Paper}>
         <Table>
           <TableHead>
             <TableRow>
               <TableCell key={0}>0</TableCell>
-              { headers.map((item, i) => <TableCell key={i+1}>{item}</TableCell>) }
+              { headers.map((item, i) =>
+                <TableCell key={i+1}>{item}</TableCell>) }
             </TableRow>
           </TableHead>
           <TableBody>
-            { data.slice(0, 10).map((row, i) => <TableRow key={i}><TableCell key={i}>{i+1}</TableCell>{displayRow(row)}</TableRow >) }
+            { data.slice(0, 10).map((row, i) =>
+              <TableRow key={i}><TableCell key={i}>{i+1}</TableCell>{displayRow(row)}</TableRow >) }
           </TableBody>
         </Table>
       </TableContainer>
