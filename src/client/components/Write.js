@@ -96,7 +96,7 @@ class Write extends Component {
       <Grid container>
         <Grid item md={6} className="grid-p2">
 
-          <h3 className="text-info font-weight-600">Write Your Email</h3>
+          <h2 className="text-info font-weight-600" id="write">Write Your Email</h2>
 
           <form onSubmit={ this.confirm }>
 
@@ -155,7 +155,7 @@ class Write extends Component {
 
         </Grid>
         <Grid item md={6} className="grid-p2">
-          <h3 className="text-info font-weight-600">Preview of Email</h3>
+          <h2 className="text-info font-weight-600">Preview of Email</h2>
 
           <Paper elevation={3}>
             <Box py={2} px={3}>

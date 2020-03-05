@@ -166,7 +166,6 @@ class Main extends Component {
     })
     .then(res => res.json())
     .then(result => {
-      console.log(result);
       if (result.message === 'Success') {
         this.setState({
           data: null,
@@ -277,18 +276,16 @@ class Main extends Component {
                   </tr>
                 </table>
 
-                <p className="mt-5">Please scroll down to write an email.</p>
+                <p className="mt-5">Please scroll down or click <a href="#write">write an email</a>.</p>
               </div> }
           </Grid>
           <Grid item md={7} className="grid-p2">
             { data != null && <DisplayTable data={ data } /> }
+            { statusBox }
           </Grid>
         </Grid>
 
         { data && <Write data={ data } send={ this.send } status={ status } /> }
-
-        { statusBox }
-
       </div>
     );
   }
