@@ -26,6 +26,9 @@
 Create **.env** file and specify the following:
 
 ```
+# For UBC
+EMAIL_HOST=smtp.mail.ubc.ca
+
 EMAIL_HOST=
 ACCOUNT_USER=
 ACCOUNT_PASS=
