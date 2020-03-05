@@ -20,7 +20,7 @@ const Upload = ({ handleUpload, handleFileSelect, handleCancel, file, errors }) 
           </ul>
         </li>
         <li>
-          A template .CSV file can be found <a href='/example.csv' target='_blank'>here</a>
+          A template .CSV file can be found <a href='/public/template.csv'>here</a>
         </li>
       </ul>
     </div>
