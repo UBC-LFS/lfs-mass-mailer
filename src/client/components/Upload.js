@@ -1,8 +1,9 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Button, Box } from '@material-ui/core';
+import CheckIcon from '@material-ui/icons/Check';
 
-const Upload = ({ handleUpload, handleFileSelect }) => (
+const Upload = ({ handleUpload, handleFileSelect, handleCancel, file, errors }) => (
   <div>
     <div>
       <span className="font-weight-600">Please upload a properly formatted .csv file.</span>
@@ -19,7 +20,7 @@ const Upload = ({ handleUpload, handleFileSelect }) => (
           </ul>
         </li>
         <li>
-          An example .CSV file can be found <a href='/example.csv' target='_blank'>here</a>
+          A template .CSV file can be found <a href='/example.csv' target='_blank'>here</a>
         </li>
       </ul>
     </div>
@@ -27,9 +28,14 @@ const Upload = ({ handleUpload, handleFileSelect }) => (
     <form onSubmit={ handleUpload }>
       <input type='file' name='file' onChange={ handleFileSelect } />
 
-      <Box my={1}>
+      { file && errors.file === undefined
+        ? <p className="text-success my-2"><CheckIcon className="material-icons" /> File selected successfully.</p> : '' }
+      { errors.file && <p className="text-error my-2">{ errors.file }</p> }
+
+      <div className="my-2">
+        <Button variant="outlined" type="button" onClick={ handleCancel }>Cancel</Button>
         <Button variant="contained" color="primary" type="submit">Upload</Button>
-      </Box>
+      </div>
     </form>
   </div>
 );

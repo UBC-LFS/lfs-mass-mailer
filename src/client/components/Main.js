@@ -14,7 +14,6 @@ import {
 import InfoIcon from '@material-ui/icons/Info';
 import ThumbUpIcon from '@material-ui/icons/ThumbUp';
 
-
 import Upload from './Upload';
 import DisplayTable from './DisplayTable';
 import Write from './Write';
@@ -31,7 +30,7 @@ import {
 class Main extends Component {
   state = {
     data: null,
-    files: null,
+    file: null,
     errors: {},
     fileSummary: {},
     status: {
@@ -42,20 +41,42 @@ class Main extends Component {
     }
   };
 
+  resetState = () => {
+    this.setState({
+      data: null,
+      file: null,
+      errors: {},
+      fileSummary: {},
+      status: {
+        isSending: false,
+        isDone: false,
+        message: null,
+        receivers: []
+      }
+    });
+  }
+
   handleFileSelect = event => {
     this.setState({
-      files: event.target.files[0],
+      file: event.target.files[0],
       errors: {}
     });
   }
 
-  formValidation = files => {
+  handleCancel = e => {
+    const form = e.target.parentNode.parentNode.parentNode;
+    const input = form.querySelector('input[type=file]');
+    input.value = '';
+    this.resetState();
+  }
+
+  formValidation = file => {
     let error = null;
-    if (files === null) {
+    if (file === null) {
       error = 'Please select your CSV file.';
-    } else if (files.type !== 'text/csv' && files.type !== 'application/vnd.ms-excel') {
+    } else if (file.type !== 'text/csv' && file.type !== 'application/vnd.ms-excel') {
       error = 'File type is invalid. Please check file type.';
-    } else if (files.size > MAX_FILE_SIZE) {
+    } else if (file.size > MAX_FILE_SIZE) {
       error = 'File size is invalid. Please check file size.';
     }
     return error;
@@ -64,39 +85,24 @@ class Main extends Component {
   fileContentValidation = rows => {
     const headers = Object.keys(rows[0]);
 
-    if ( !headers.includes(EMAIL_HEADER) ) {
-      this.setState({
-        files: null,
-        errors: { failure: "File does not contain an Email column. Please check headers and columns" }
-      });
-      return;
-    } else if ( !headers.includes(FIRST_NAME_HEADER) ) {
-      this.setState({
-        files: null,
-        errors: { failure: "File does not contain a First Name column. Please check headers and columns" }
-      });
-      return;
-    } else if ( !headers.includes(LAST_NAME_HEADER) ) {
-      this.setState({
-        files: null,
-        errors: { failure: "File does not contain a Last Name column. Please check headers and columns" }
-      });
-      return;
-    }
+    let errors = []
+    if ( headers.includes(FIRST_NAME_HEADER) === false ) errors.push(FIRST_NAME_HEADER);
+    if ( headers.includes(LAST_NAME_HEADER) === false ) errors.push(LAST_NAME_HEADER);
+    if ( headers.includes(EMAIL_HEADER) === false ) errors.push(EMAIL_HEADER);
+
+    if (errors.length > 0) return { errors: 'Invalid headers found - ' + errors.join(', ') };
 
     let missingFirstNames = [];
     let missingLastNames = [];
     let invalidEmails = [];
     for (let i = 0; i < rows.length; i++) {
-      if (rows[i][FIRST_NAME_HEADER].length === 0) {
-        missingFirstNames.push(i + 1);
-      }
-      if (rows[i][LAST_NAME_HEADER].length === 0) {
-        missinglastNames.push(i + 1);
-      }
-      if (!validateEmail(rows[i][EMAIL_HEADER])) {
-        invalidEmails.push(i + 1);
-      }
+      if (rows[i][FIRST_NAME_HEADER].length === 0) missingFirstNames.push(i + 1);
+      if (rows[i][LAST_NAME_HEADER].length === 0) missingLastNames.push(i + 1);
+      if (!validateEmail(rows[i][EMAIL_HEADER])) invalidEmails.push(i + 1);
+    }
+
+    if (missingFirstNames.length > 0 || missingLastNames.length > 0 || invalidEmails.length > 0) {
+      return { errors: 'Some missing values or invalid emails found' };
     }
 
     return {
@@ -109,13 +115,13 @@ class Main extends Component {
   handleUpload = event => {
     event.preventDefault();
 
-    const error = this.formValidation(this.state.files);
+    const error = this.formValidation(this.state.file);
     if (error !== null) {
-      this.setState({ errors: { failure: error } });
+      this.setState({ errors: { file: error } });
       return;
     }
 
-    Papa.parse(this.state.files, {
+    Papa.parse(this.state.file, {
       delimiter: ',',
       header: true,
       skipEmptyLines: true,
@@ -125,16 +131,22 @@ class Main extends Component {
         if (data.length > 0) {
           const fileSummary = this.fileContentValidation(data);
 
-          this.setState({
-            data,
-            fileSummary
-          });
+          if (fileSummary.errors === undefined) {
+            this.setState({ data, fileSummary });
+          } else {
+            this.setState({
+              ...this.state,
+              data: null,
+              errors: { file: 'Please check your file: ' + fileSummary.errors }
+            });
+          }
+
         } else {
-          this.setState({ errors: { failure: "File parse error occured." } });
+          this.setState({ errors: { file: "File is empty." } });
         }
       },
       error: (error, file) => {
-        this.setState({ errors: { failure: "Parse library error occured." } });
+        this.setState({ errors: { file: "Parse library error occured." } });
       }
     });
   }
@@ -166,36 +178,23 @@ class Main extends Component {
     })
     .then(res => res.json())
     .then(result => {
-      if (result.message === 'Success') {
-        this.setState({
-          data: null,
-          files: null,
-          errors: {},
-          fileSummary: {},
-          status: {
-            isSending: false,
-            isDone: true,
-            message: result.message,
-            receivers: result.receivers
-          }
-        });
-      } else {
-        this.setState({
-          status: {
-            ...this.state.status,
-            isSending: false,
-            isDone: true,
-            message: result.message,
-            receivers: result.receivers
-          }
-        });
-      }
-
+      this.setState({
+        data: null,
+        file: null,
+        errors: {},
+        fileSummary: {},
+        status: {
+          isSending: false,
+          isDone: true,
+          message: result.message,
+          receivers: result.receivers
+        }
+      });
     });
   }
 
   render() {
-    const { data, files, errors, fileSummary, status } = this.state;
+    const { data, file, errors, fileSummary, status } = this.state;
 
     let statusBox = null;
     if (status.isSending === false && status.isDone === true) {
@@ -210,7 +209,6 @@ class Main extends Component {
                           Please check receivers below.
                           <ol>{ receivers }</ol>
                         </p>
-
                       </div>);
       } else {
         statusBox = (<div className="bg-light-gray my-3 p-3">
@@ -238,54 +236,56 @@ class Main extends Component {
             <Upload
               handleUpload={ this.handleUpload }
               handleFileSelect={ this.handleFileSelect }
+              handleCancel={ this.handleCancel }
+              file={ file }
+              errors={ errors }
             />
 
-            { files && <p className="text-success my-2">File selected successfully.</p> }
 
-            { errors.failure && <p className="text-error my-2">{ errors.failure }</p> }
-
-            { data &&
-              <div className="bg-light-gray mt-4 p-3">
+            { data && errors.file === undefined ?
+              (<div className="bg-light-gray mt-4 p-3">
                 <h4 className="text-info">
                   <InfoIcon className="material-icons" /> Summary of Uploaded File
                 </h4>
 
                 <table className="custom-table my-3">
-                  <tr>
-                    <td>Total rows:</td>
-                    <td>{ data.length }</td>
-                  </tr>
-                  <tr>
-                    <td>Missing First Names:</td>
-                    <td>{ fileSummary.missingFirstNames.length > 0 ? fileSummary.missingFirstNames : "None" }
-                    </td>
-                  </tr>
-                  <tr>
-                    <td>Missing Last Names:</td>
-                    <td>{ fileSummary.missingLastNames.length > 0 ? fileSummary.missingLastNames : "None" }
-                    </td>
-                  </tr>
-                  <tr>
-                    <td>Valid Emails:</td>
-                    <td>{ data.length - fileSummary.invalidEmails.length }</td>
-                  </tr>
-                  <tr>
-                    <td>Invalid Emails:</td>
-                    <td>{fileSummary.invalidEmails.length > 0 ? fileSummary.invalidEmails : "None" }
-                    </td>
-                  </tr>
+                  <tbody>
+                    <tr>
+                      <td>Total rows:</td>
+                      <td>{ data.length }</td>
+                    </tr>
+                    <tr>
+                      <td>Missing First Names:</td>
+                      <td>{ fileSummary.missingFirstNames.length > 0 ? fileSummary.missingFirstNames : "None" }
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>Missing Last Names:</td>
+                      <td>{ fileSummary.missingLastNames.length > 0 ? fileSummary.missingLastNames : "None" }
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>Valid Emails:</td>
+                      <td>{ data.length - fileSummary.invalidEmails.length }</td>
+                    </tr>
+                    <tr>
+                      <td>Invalid Emails:</td>
+                      <td>{fileSummary.invalidEmails.length > 0 ? fileSummary.invalidEmails.length : "None" }
+                      </td>
+                    </tr>
+                  </tbody>
                 </table>
 
                 <p className="mt-5">Please scroll down or click <a href="#write">write an email</a>.</p>
-              </div> }
+              </div>) : '' }
           </Grid>
           <Grid item md={7} className="grid-p2">
-            { data != null && <DisplayTable data={ data } /> }
+            { data && errors.file === undefined ? <DisplayTable data={ data } /> : '' }
             { statusBox }
           </Grid>
         </Grid>
 
-        { data && <Write data={ data } send={ this.send } status={ status } /> }
+        { data && errors.file === undefined ? <Write data={ data } send={ this.send } status={ status } /> : '' }
       </div>
     );
   }

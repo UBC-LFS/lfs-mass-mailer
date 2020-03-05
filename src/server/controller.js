@@ -38,7 +38,7 @@ async function send(transporter, body) {
 exports.sendEmail = (req, res, next) => {
   if ( validateData(req.body) ) {
 
-    // options for ort and secure
+    // Options for port and secure
     // In most cases set this value to true if you are connecting to port 465. For port 587 or 25 keep it false
     let transporter = nodemailer.createTransport({
       host: process.env.EMAIL_HOST,
@@ -47,9 +47,6 @@ exports.sendEmail = (req, res, next) => {
       auth: {
         user: process.env.ACCOUNT_USER,
         pass: process.env.ACCOUNT_PASS
-      },
-      tls: {
-        rejectUnauthorized: false
       }
     });
 
