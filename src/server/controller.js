@@ -37,10 +37,13 @@ async function send(transporter, body) {
 
 exports.sendEmail = (req, res, next) => {
   if ( validateData(req.body) ) {
-
+    
+    // setup
+    // https://community.nodemailer.com/2-0-0-beta/setup-smtp/
     // Options for port and secure
     // In most cases set this value to true if you are connecting to port 465. For port 587 or 25 keep it false
-    let transporter = nodemailer.createTransport({
+
+    var smtp = {
       host: process.env.EMAIL_HOST,
       port: 587,
       secure: false,
@@ -48,10 +51,26 @@ exports.sendEmail = (req, res, next) => {
         user: process.env.ACCOUNT_USER,
         pass: process.env.ACCOUNT_PASS
       }
-    });
+    };
+
+    var smtpRelay = {
+      host: process.env.EMAIL_HOST,
+      port: 25,
+      secure: false,
+      tls: {
+        rejectUnauthorized: false
+      },
+      auth: {
+        user: process.env.ACCOUNT_USER,
+        pass: process.env.ACCOUNT_PASS
+      }
+    };
+
+    let transporter = nodemailer.createTransport(smtpRelay);
 
     let verify = new Promise((resolve, reject) => {
       transporter.verify((error, success) => {
+        console.error('verify error:', error);
         if (error) reject('An error occurred. Authentication unsuccessful. Please check your information.');
         else resolve(success);
       });

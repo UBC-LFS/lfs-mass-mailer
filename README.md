@@ -27,7 +27,7 @@ Create **.env** file and specify the following:
 
 ```
 # For UBC
-EMAIL_HOST=smtp.mail.ubc.ca
+EMAIL_HOST=smtp.mail-relay.ubc.ca or smtp.mail.ubc.ca
 
 EMAIL_HOST=
 ACCOUNT_USER=
@@ -35,6 +35,26 @@ ACCOUNT_PASS=
 ACCOUNT_EMAIL=
 ACCOUNT_NAME=
 ```
+
+
+## SMTP setting options
+Go go lfs-mass-mailer/srv/server/controller.js
+Then change the variable name in **transport**
+
+
+1. smtp.mail-relay.ubc.ca (by default)
+```
+let transporter = nodemailer.createTransport(smtpRelay);
+
+```
+
+
+2. smtp.mail.ubc.ca
+```
+let transporter = nodemailer.createTransport(smtp);
+
+```
+
 
 
 ### Quick Start
