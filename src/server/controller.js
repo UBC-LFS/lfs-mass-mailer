@@ -37,7 +37,7 @@ async function send(transporter, body) {
 
 exports.sendEmail = (req, res, next) => {
   if ( validateData(req.body) ) {
-    
+
     // setup
     // https://community.nodemailer.com/2-0-0-beta/setup-smtp/
     // Options for port and secure
@@ -59,10 +59,6 @@ exports.sendEmail = (req, res, next) => {
       secure: false,
       tls: {
         rejectUnauthorized: false
-      },
-      auth: {
-        user: process.env.ACCOUNT_USER,
-        pass: process.env.ACCOUNT_PASS
       }
     };
 
@@ -70,9 +66,12 @@ exports.sendEmail = (req, res, next) => {
 
     let verify = new Promise((resolve, reject) => {
       transporter.verify((error, success) => {
-        console.error('verify error:', error);
-        if (error) reject('An error occurred. Authentication unsuccessful. Please check your information.');
-        else resolve(success);
+        if (error) {
+          console.error('transporter verify error:', error);
+          reject('An error occurred. Authentication unsuccessful. Please check your information.');
+        } else {
+          resolve(success);
+        }
       });
     });
 
