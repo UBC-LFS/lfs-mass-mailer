@@ -39,7 +39,7 @@ ACCOUNT_NAME=
 
 ## SMTP setting options
 - Go go lfs-mass-mailer/srv/server/controller.js
-- Then change the variable name in **transporter**
+- Then change the variable name in **createTransport**
 
 
 1. smtp.mail-relay.ubc.ca (by default)
