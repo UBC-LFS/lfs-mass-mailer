@@ -20,9 +20,6 @@ import Write from './Write';
 
 import {
   MAX_FILE_SIZE,
-  EMAIL_HEADER,
-  FIRST_NAME_HEADER,
-  LAST_NAME_HEADER,
   validateEmail
 } from '../scripts/util.js';
 
@@ -83,31 +80,42 @@ class Main extends Component {
   }
 
   fileContentValidation = rows => {
-    const headers = Object.keys(rows[0]);
+    let headers = Object.keys(rows[0]);
 
-    let errors = []
-    if ( headers.includes(FIRST_NAME_HEADER) === false ) errors.push(FIRST_NAME_HEADER);
-    if ( headers.includes(LAST_NAME_HEADER) === false ) errors.push(LAST_NAME_HEADER);
-    if ( headers.includes(EMAIL_HEADER) === false ) errors.push(EMAIL_HEADER);
+    let EMAIL_HEADER = null;
+    let EMAIL_INDEX = -1;
 
-    if (errors.length > 0) return { errors: 'Invalid headers found - ' + errors.join(', ') };
-
-    let missingFirstNames = [];
-    let missingLastNames = [];
-    let invalidEmails = [];
-    for (let i = 0; i < rows.length; i++) {
-      if (rows[i][FIRST_NAME_HEADER].length === 0) missingFirstNames.push(i + 1);
-      if (rows[i][LAST_NAME_HEADER].length === 0) missingLastNames.push(i + 1);
-      if (!validateEmail(rows[i][EMAIL_HEADER])) invalidEmails.push(i + 1);
+    let emailUpper = headers.indexOf('Email');
+    if (emailUpper > -1) {
+      EMAIL_HEADER = headers[emailUpper];
+      EMAIL_INDEX = emailUpper;
     }
 
-    if (missingFirstNames.length > 0 || missingLastNames.length > 0 || invalidEmails.length > 0) {
-      return { errors: 'Some missing values or invalid emails found' };
+    let emailLower = headers.indexOf('email');
+    if (emailLower > -1) {
+      EMAIL_HEADER = headers[emailLower];
+      EMAIL_INDEX = emailLower;
+    }
+
+    let errors = []
+    if (emailUpper === -1 && emailLower === -1) errors.push('EMAIL');
+
+    if (errors.length > 0) return {
+      errors: 'Invalid headers found - A file must contain Email or email in headers.'
+    };
+
+    let invalidEmails = [];
+    for (let i = 0; i < rows.length; i++) {
+      if ( !validateEmail(rows[i][EMAIL_HEADER]) ) invalidEmails.push(i + 1);
+    }
+
+    if (invalidEmails.length > 0) {
+      return { errors: 'Invalid emails found' };
     }
 
     return {
-      missingFirstNames,
-      missingLastNames,
+      headers,
+      EMAIL_HEADER,
       invalidEmails
     };
   }
@@ -152,7 +160,7 @@ class Main extends Component {
   }
 
   send = emailData => {
-    const { data } = this.state;
+    const { data, fileSummary } = this.state;
 
     this.setState({
       status: { ...this.state.status, isSending: true, isDone: false }
@@ -163,6 +171,7 @@ class Main extends Component {
     const subject = emailData.email.subject;
     const body = {
       data: data,
+      fileSummary: fileSummary,
       subject: subject,
       html: (emailData.rawTextType == true) ? null : emailData.email.htmlMessage,
       text: (emailData.rawTextType == true) ? emailData.email.rawMessage : null
@@ -241,7 +250,6 @@ class Main extends Component {
               errors={ errors }
             />
 
-
             { data && errors.file === undefined ?
               (<div className="bg-light-gray mt-4 p-3">
                 <h4 className="text-info">
@@ -255,14 +263,8 @@ class Main extends Component {
                       <td>{ data.length }</td>
                     </tr>
                     <tr>
-                      <td>Missing First Names:</td>
-                      <td>{ fileSummary.missingFirstNames.length > 0 ? fileSummary.missingFirstNames : "None" }
-                      </td>
-                    </tr>
-                    <tr>
-                      <td>Missing Last Names:</td>
-                      <td>{ fileSummary.missingLastNames.length > 0 ? fileSummary.missingLastNames : "None" }
-                      </td>
+                      <td>Headers:</td>
+                      <td>{ fileSummary.headers.join(', ') }</td>
                     </tr>
                     <tr>
                       <td>Valid Emails:</td>
@@ -285,7 +287,7 @@ class Main extends Component {
           </Grid>
         </Grid>
 
-        { data && errors.file === undefined ? <Write data={ data } send={ this.send } status={ status } /> : '' }
+        { data && errors.file === undefined ? <Write data={ data } send={ this.send } status={ status } headers={ fileSummary.headers } /> : '' }
       </div>
     );
   }

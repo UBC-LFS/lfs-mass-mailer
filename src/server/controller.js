@@ -4,28 +4,34 @@ const async = require('async');
 require('dotenv').config();
 
 const validateData = state => {
-  return state.hasOwnProperty('data') && state.hasOwnProperty('subject') && state.hasOwnProperty('html') && state.hasOwnProperty('text') && state.data.length > 0
+  return state.hasOwnProperty('data') && state.hasOwnProperty('fileSummary') && state.hasOwnProperty('subject') && state.hasOwnProperty('html') && state.hasOwnProperty('text') && state.data.length > 0
 };
 
-const replaceFirstName = (message, firstName) => {
+const replaceValues = (message, user) => {
   if (message !== null) {
-    return message.replace(new RegExp('%FIRST_NAME%', 'ig'), firstName);
+    for (let key of Object.keys(user)) {
+      message.replace(new RegExp('%' + key + '%', 'ig'), user[key]);
+    }
+    return message;
   }
 };
 
 async function send(transporter, body) {
+  headers = body.fileSummary.headers;
+  EMAIL_HEADER = body.fileSummary.EMAIL_HEADER;
   let receivers = [];
 
   try {
     for (let user of body.data) {
       let sent = await transporter.sendMail({
         from: `${process.env.ACCOUNT_NAME} <${process.env.ACCOUNT_EMAIL}>`,
-        to: user['Email'],
+        to: user[EMAIL_HEADER],
         subject: body.subject,
-        html: replaceFirstName(body.html, user['First Name']),
-        text: replaceFirstName(body.text, user['First Name'])
+        html: replaceValues(body.html, user),
+        text: replaceValues(body.text, user)
       });
-      receivers.push(user['First Name'] + " " + user['Last Name'] + " <" + user['Email'] + ">");
+      console.log(sent);
+      receivers.push("<" + user['Email'] + ">");
     }
 
   } catch (error) {
@@ -43,22 +49,22 @@ exports.sendEmail = (req, res, next) => {
     // Options for port and secure
     // In most cases set this value to true if you are connecting to port 465. For port 587 or 25 keep it false
 
-    var smtp = {
+    const smtpRelay = {
+      host: process.env.EMAIL_HOST,
+      port: 25,
+      secure: false,
+      tls: {
+        rejectUnauthorized: false
+      }
+    };
+
+    const smtp = {
       host: process.env.EMAIL_HOST,
       port: 587,
       secure: false,
       auth: {
         user: process.env.ACCOUNT_USER,
         pass: process.env.ACCOUNT_PASS
-      }
-    };
-
-    var smtpRelay = {
-      host: process.env.EMAIL_HOST,
-      port: 25,
-      secure: false,
-      tls: {
-        rejectUnauthorized: false
       }
     };
 

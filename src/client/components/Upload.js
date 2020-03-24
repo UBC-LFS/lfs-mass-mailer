@@ -7,17 +7,13 @@ const Upload = ({ handleUpload, handleFileSelect, handleCancel, file, errors }) 
   <div>
     <div>
       <span className="font-weight-600">Please upload a properly formatted .csv file.</span>
-      <ul>
+      <ul className="line-height-lg">
         <li>
           Files must be under <span className="text-error font-weight-600">10MB</span>.
         </li>
         <li>All other file types are rejected.</li>
-        <li>A file must contain headers:
-          <ul className="font-weight-600">
-            <li>First Name</li>
-            <li>Last Name</li>
-            <li>Email</li>
-          </ul>
+        <li>
+          A file must contain <span className="text-error font-weight-600">Email or email</span> in headers
         </li>
         <li>
           A template .CSV file can be found <a href='/public/template.csv'>here</a>

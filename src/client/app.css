@@ -155,3 +155,7 @@ body,
 .custom-table td {
   border-bottom: 1px solid #ccc;
 }
+
+.line-height-lg {
+  line-height: 1.5;
+}

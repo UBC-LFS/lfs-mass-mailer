@@ -14,9 +14,8 @@ class Write extends Component {
   state = {
     email: {
       subject: '',
-      rawMessage: `Hi %FIRST_NAME%,`,
-      htmlMessage: `<p>Hi %FIRST_NAME%,</p>`
-      //htmlMessage: `<p>Hi ${this.props.data[0]['First Name']},</p>`
+      rawMessage: `Hi ,`,
+      htmlMessage: `<p>Hi ,</p>`
     },
     rawTextType: false,
     errors: {
@@ -77,7 +76,7 @@ class Write extends Component {
   }
 
   render() {
-    const { status } = this.props;
+    const { data, status, headers } = this.props;
     const { email, rawTextType, errors } = this.state;
 
     const preview= () => {
@@ -97,6 +96,14 @@ class Write extends Component {
         <Grid item md={6} className="grid-p2">
 
           <h2 className="text-info font-weight-600" id="write">Write Your Email</h2>
+
+          <div>
+          <div className="text-gray">Please use the following Header Replacements. Those variables will be replaced by actual values while sending an Email.</div>
+            <div className="font-weight-600">Header Replacements:</div>
+            <ul>
+              { headers.map((item, i) => <li key={i}>%{ item.toUpperCase().replace(/ /g, '_') }%</li>) }
+            </ul>
+          </div>
 
           <form onSubmit={ this.confirm }>
 
