@@ -31,7 +31,10 @@ async function send(transporter, body) {
         html: replaceValues(body.html, user),
         text: replaceValues(body.text, user)
       });
-      receivers.push("<" + user[EMAIL_HEADER] + ">");
+      
+      if (sent.messageId) {
+        receivers.push("<" + user[EMAIL_HEADER] + ">");
+      }
     }
 
   } catch (error) {
@@ -72,7 +75,7 @@ exports.sendEmail = (req, res, next) => {
     if (process.env.TRANSPORTER_OPTIONS === 'smtp') {
       options = smtp;
     }
-
+    
     let transporter = nodemailer.createTransport(options);
 
     let verify = new Promise((resolve, reject) => {

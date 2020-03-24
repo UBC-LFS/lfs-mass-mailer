@@ -203,7 +203,7 @@ class Main extends Component {
           isSending: false,
           isDone: true,
           message: result.message,
-          receivers: result.receivers
+          receivers: (result.receivers === undefined ? [] : result.receivers)
         }
       });
     });
@@ -234,15 +234,16 @@ class Main extends Component {
       } else {
         statusBox = (<div className="bg-light-gray my-3 p-3">
                       <h4 className="text-error font-weight-600 mb-3">
-                        <ThumbUpIcon className="material-icons" /> Failed to send emails.
+                        Failed to send emails.
                       </h4>
                       { status.receivers.length > 0
                         ? <div>
                             Sent { status.receivers.length } email(s) partially. Please check receivers below.
                             <ol>{ receivers }</ol>
                           </div>
-                        : <div>Sorry, we cannot send any emails.</div>
+                        : <div>Sorry, we cannot send any emails. { status.message }</div>
                       }
+                      <br />
                       <div>
                         Please click on
                         <button className="mx-1" type="button" onClick={ this.handleRefresh }>Refresh</button>

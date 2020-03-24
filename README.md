@@ -27,9 +27,15 @@ Create **.env** file and specify the following:
 
 ```
 # For UBC
-EMAIL_HOST=smtp.mail-relay.ubc.ca or smtp.mail.ubc.ca
 
-TRANSPORTER_OPTIONS=smtpRelay (by default) or smtp
+# SMTP relay
+EMAIL_HOST=smtp.mail-relay.ubc.ca
+TRANSPORTER_OPTIONS=smtpRelay (by default)
+
+# SMTP
+EMAIL_HOST=smtp.mail.ubc.ca
+TRANSPORTER_OPTIONS=smtp
+
 
 ---------------------
 
@@ -62,5 +68,5 @@ $ npm start
 
 
 # Optional. Build for production
-$npm run build
+$ npm run build
 ```
