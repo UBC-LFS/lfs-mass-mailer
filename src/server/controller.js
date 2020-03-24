@@ -10,7 +10,8 @@ const validateData = state => {
 const replaceValues = (message, user) => {
   if (message !== null) {
     for (let key of Object.keys(user)) {
-      message.replace(new RegExp('%' + key + '%', 'ig'), user[key]);
+      const replaceemnt = '%' + key.toUpperCase().replace(/ /g, '_') + '%';
+      message = message.replace(new RegExp(replaceemnt, 'ig'), user[key]);
     }
     return message;
   }
@@ -30,8 +31,7 @@ async function send(transporter, body) {
         html: replaceValues(body.html, user),
         text: replaceValues(body.text, user)
       });
-      console.log(sent);
-      receivers.push("<" + user['Email'] + ">");
+      receivers.push("<" + user[EMAIL_HEADER] + ">");
     }
 
   } catch (error) {

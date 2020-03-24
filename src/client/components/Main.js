@@ -67,6 +67,13 @@ class Main extends Component {
     this.resetState();
   }
 
+  handleRefresh = e => {
+    const form = e.target.parentNode.parentNode.parentNode.parentNode;
+    const input = form.querySelector('input[type=file]');
+    input.value = '';
+    this.resetState();
+  }
+
   formValidation = file => {
     let error = null;
     if (file === null) {
@@ -214,10 +221,15 @@ class Main extends Component {
                         <h4 className="text-success font-weight-600 mb-3">
                           <ThumbUpIcon className="material-icons" /> Sent { status.receivers.length } email(s) successfully.
                         </h4>
-                        <p>
+                        <div>
                           Please check receivers below.
                           <ol>{ receivers }</ol>
-                        </p>
+                        </div>
+                        <div>
+                          Please click on
+                          <button className="mx-1" type="button" onClick={ this.handleRefresh }>Refresh</button>
+                          button to reset this page.
+                        </div>
                       </div>);
       } else {
         statusBox = (<div className="bg-light-gray my-3 p-3">
@@ -225,12 +237,17 @@ class Main extends Component {
                         <ThumbUpIcon className="material-icons" /> Failed to send emails.
                       </h4>
                       { status.receivers.length > 0
-                        ? <p>
+                        ? <div>
                             Sent { status.receivers.length } email(s) partially. Please check receivers below.
                             <ol>{ receivers }</ol>
-                          </p>
-                        : <p>Sorry, we cannot send any emails.</p>
+                          </div>
+                        : <div>Sorry, we cannot send any emails.</div>
                       }
+                      <div>
+                        Please click on
+                        <button className="mx-1" type="button" onClick={ this.handleRefresh }>Refresh</button>
+                        button to reset this page.
+                      </div>
                     </div>);
       }
     }

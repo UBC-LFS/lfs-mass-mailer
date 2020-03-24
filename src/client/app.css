@@ -105,6 +105,10 @@ body,
   background-color: #2196f3;
 }
 
+.mx-1 {
+  margin: 0 0.25rem;
+}
+
 .my-2 {
   margin: 0.5rem 0;
 }

@@ -81,6 +81,7 @@ class Write extends Component {
 
     const preview= () => {
       let message = '';
+
       if (rawTextType) {
         message = email.rawMessage.replace(/(?:\r\n|\r|\n)/g, '<br />');
       } else {
@@ -88,6 +89,13 @@ class Write extends Component {
         message = message.replace(new RegExp('<p>', 'g'), '<div>');
         message = message.replace(new RegExp('</p>', 'g'), '</div>');
       }
+
+      const user = data[0];
+      for (let key of Object.keys(user)) {
+        const replaceemnt = '%' + key.toUpperCase().replace(/ /g, '_') + '%';
+        message = message.replace(new RegExp(replaceemnt, 'ig'), user[key]);
+      }
+
       return message;
     }
 
