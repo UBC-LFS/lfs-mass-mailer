@@ -68,7 +68,12 @@ exports.sendEmail = (req, res, next) => {
       }
     };
 
-    let transporter = nodemailer.createTransport(smtpRelay);
+    let options = smtpRelay;
+    if (process.env.TRANSPORTER_OPTIONS === 'smtp') {
+      options = smtp;
+    }
+
+    let transporter = nodemailer.createTransport(options);
 
     let verify = new Promise((resolve, reject) => {
       transporter.verify((error, success) => {

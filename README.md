@@ -29,52 +29,38 @@ Create **.env** file and specify the following:
 # For UBC
 EMAIL_HOST=smtp.mail-relay.ubc.ca or smtp.mail.ubc.ca
 
+TRANSPORTER_OPTIONS=smtpRelay (by default) or smtp
+
+---------------------
+
 EMAIL_HOST=
 ACCOUNT_USER=
 ACCOUNT_PASS=
 ACCOUNT_EMAIL=
 ACCOUNT_NAME=
+TRANSPORTER_OPTIONS=
 ```
 
-
-## SMTP setting options
-- Go go lfs-mass-mailer/srv/server/controller.js
-- Then change the variable name in **createTransport**
-
-
-1. smtp.mail-relay.ubc.ca (by default)
-```
-let transporter = nodemailer.createTransport(smtpRelay);
-
-```
-
-
-2. smtp.mail.ubc.ca
-```
-let transporter = nodemailer.createTransport(smtp);
-
-```
-
+- **Note:** *ACCOUNT_USER* and *ACCOUNT_PASS* must filled when **smtp** options will be used.
 
 
 ### Quick Start
 
 ```
 # Clone the repository
-git clone https://github.com/crsandeep/simple-react-full-stack
+$ git clone https://github.com/UBC-LFS/lfs-mass-mailer.git
 
-# Go inside the directory
-cd simple-react-full-stack
 
 # Install dependencies
-yarn (or npm install)
+$ npm install
 
 # Start development server
-yarn dev (or npm run dev)
-
-# Build for production
-yarn build (or npm run build)
+$ npm run dev
 
 # Start production server
-yarn start (or npm start)
+$ npm start
+
+
+# Optional. Build for production
+$npm run build
 ```
